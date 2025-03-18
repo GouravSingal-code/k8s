@@ -48,4 +48,13 @@ jobs:
     - name: Deploy to EKS
       run: |
         aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
-        kubectl apply -k k8s/ 
+        kubectl apply -k k8s/
+
+    - name: Show Service Endpoint
+      run: |
+        echo "Waiting for LoadBalancer to be provisioned..."
+        sleep 30
+        echo "Service Endpoint:"
+        kubectl get service node-app-service -o wide
+        echo "To test the endpoint, use:"
+        echo "curl http://$(kubectl get service node-app-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')/health" 
